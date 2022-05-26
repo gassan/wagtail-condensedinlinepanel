@@ -5,7 +5,10 @@ import six
 from django import forms
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
-from django.utils.translation import ugettext_lazy as _
+try:
+    from django.utils.translation import ugettext_lazy as _
+except ImportError:
+    from django.utils.translation import gettext_lazy as _
 
 from modelcluster.forms import BaseChildFormSet
 
@@ -144,7 +147,7 @@ class BaseCondensedInlinePanelFormSet(BaseChildFormSet):
                     'id': i,
                     'instanceAsStr': six.text_type(form.instance),
                     'fields': {
-                        field_name: form[field_name].field.widget.format_value(form[field_name].value()) or form[field_name].value()
+                        field_name: form[field_name].value()
                         for field_name in form.fields.keys()
                     },
                     'extra': get_form_extra_data(form),
@@ -160,7 +163,7 @@ class BaseCondensedInlinePanelFormSet(BaseChildFormSet):
             ],
             'emptyForm': {
                 'fields': {
-                    field_name: self.empty_form[field_name].field.widget.format_value(self.empty_form[field_name].value()) or self.empty_form[field_name].value()
+                    field_name: self.empty_form[field_name].value()
                     for field_name in self.empty_form.fields.keys()
                 }
             }
